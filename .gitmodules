@@ -1,0 +1,3 @@
+[submodule "gnomi.models"]
+	path = gnomi.models
+	url = https://github.com/brandonPauly/gnomi.models.git

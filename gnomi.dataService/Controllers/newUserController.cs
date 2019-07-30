@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using gnomi.dataService.requests;
-using Microsoft.AspNetCore.Http;
+﻿using gnomi.dataService.requests;
+using gnomi.dataService.services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace gnomi.dataService.Controllers
@@ -12,11 +8,17 @@ namespace gnomi.dataService.Controllers
     [ApiController]
     public class newUserController : ControllerBase
     {
+        private iHumanService _service;
+
+        public newUserController(iHumanService service)
+        {
+            _service = service;
+        }
         // POST: api/newUser
         [HttpPost]
         public void Post([FromBody] newUserRequest data)
         {
-            var check = data;
+            _service.addNewHuman(data);
         }
     }
 }

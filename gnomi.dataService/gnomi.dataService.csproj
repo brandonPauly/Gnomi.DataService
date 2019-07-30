@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\gnomi.models\gnomi.models\gnomi.models.csproj" />
+    <ProjectReference Include="..\gnomi.repositories\gnomi.repositories.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,17 +1,20 @@
 ﻿using gnomi.dataService.entities;
-using gnomi.repositories.utility;
+using gnomi.repositories.connection;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Reflection;
 
 namespace gnomi.repositories
 {
     public abstract class baseRepository<key, t> : iRepository<key, t> where t : iEntity<key> 
     {
-
         private iDataConnection _connection;
         
         public baseRepository(iDataConnectionFactory factory)
         {
             _connection = factory.getDataConnection();
+            
         }
 
         protected baseRepository()
@@ -20,7 +23,18 @@ namespace gnomi.repositories
 
         public void add(t entity)
         {
-            var command = $"inset into { entity.metadata.name } { entity.metadata.attributeNames } values { entity.metadata.parameterNames }";
+            var properties = entity.GetType().GetProperties();
+            var sqlClient = new SqlConnection(_connection.connectionString);
+            var command = $"insert into { entity.metadata.name } { entity.metadata.attributeNames } values { entity.metadata.parameterNames }";
+            using (sqlClient)
+            {
+                sqlClient.Open();
+                var comm = sqlClient.CreateCommand();
+                comm.CommandType = System.Data.CommandType.Text;
+                comm.CommandText = command;
+                comm.Parameters.AddRange(properties.Where(prop => prop.GetValue(entity) != null && prop.Name != "metadata").Select(prop => new SqlParameter(prop.Name, prop.GetValue(entity))).ToArray());
+                comm.ExecuteNonQuery();
+            }
         }
 
         public void addRange(IEnumerable<t> entities)

@@ -1,5 +1,5 @@
 ﻿
-namespace gnomi.repositories.utility
+namespace gnomi.repositories.connection
 {
     public interface iDataConnectionFactory
     {

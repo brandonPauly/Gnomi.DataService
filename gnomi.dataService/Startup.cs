@@ -1,7 +1,7 @@
 ﻿using gnomi.dataService.entities;
 using gnomi.dataService.services;
 using gnomi.repositories;
-using gnomi.repositories.utility;
+using gnomi.repositories.connection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +15,7 @@ namespace gnomi.dataService
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            settings.configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -22,9 +23,10 @@ namespace gnomi.dataService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddScoped<iHumanService, humanService>();
             services.AddScoped<iHumanRepository<long, human<long>>, humanRepository<long, human<long>>>();
-            services.AddScoped<iDataConnectionFactory, sqlDataConnectionFactory>();
+            services.AddTransient<iDataConnectionFactory>(f => new sqlDataConnectionFactory(settings.dataConnectionString));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

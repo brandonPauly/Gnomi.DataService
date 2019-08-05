@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\gnomi.common\gnomi.common\gnomi.common.csproj" />
     <ProjectReference Include="..\gnomi.models\gnomi.models\gnomi.models.csproj" />
   </ItemGroup>
 

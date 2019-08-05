@@ -1,5 +1,4 @@
 ﻿using gnomi.dataService.entities;
-using gnomi.dataService.metadata;
 using gnomi.dataService.requests;
 using gnomi.repositories;
 
@@ -16,13 +15,14 @@ namespace gnomi.dataService.services
 
         public human<long> addNewHuman(newUserRequest userRequest)
         {
-            var newHuman = new human<long>(new humanMetadata<long>())
+            var newHuman = new human<long>()
             {
                 email = userRequest.email,
                 password = userRequest.passwordHash
             };
 
-            _repository.add(newHuman);
+            newHuman = _repository.addNewHuman(newHuman);
+            newHuman.password = null;
 
             return newHuman;
         }

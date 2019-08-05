@@ -1,38 +1,42 @@
-﻿using gnomi.dataService.entities;
+﻿using gnomi.common.utility.reflection;
+using gnomi.dataService.entities;
 using gnomi.repositories.connection;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 
 namespace gnomi.repositories
 {
     public abstract class baseRepository<key, t> : iRepository<key, t> where t : iEntity<key> 
     {
-        private iDataConnection _connection;
+        protected iDataConnection _connection;
+        protected SqlConnection _sqlClient;
+        protected iInstanceAnalyzer _instanceAnalyzer;
         
-        public baseRepository(iDataConnectionFactory factory)
+        public baseRepository(iDataConnectionFactory factory, iInstanceAnalyzer instanceAnalyzer)
         {
             _connection = factory.getDataConnection();
-            
+            _sqlClient = new SqlConnection(_connection.connectionString);
+            _instanceAnalyzer = instanceAnalyzer;
         }
 
-        protected baseRepository()
-        {
-        }
+        protected baseRepository() { }
 
         public void add(t entity)
         {
-            var properties = entity.GetType().GetProperties();
-            var sqlClient = new SqlConnection(_connection.connectionString);
-            var command = $"insert into { entity.metadata.name } { entity.metadata.attributeNames } values { entity.metadata.parameterNames }";
-            using (sqlClient)
+            _instanceAnalyzer.instance = entity;
+            var fieldNames = _instanceAnalyzer.getPopulatedFieldNames();
+            var tableName = _instanceAnalyzer.getClassName();
+
+            var command = $"insert into { tableName } { joinFieldNames(fieldNames) } values { joinParameterNames(fieldNames) }";
+
+            using (_sqlClient)
             {
-                sqlClient.Open();
-                var comm = sqlClient.CreateCommand();
+                _sqlClient.Open();
+                var comm = _sqlClient.CreateCommand();
                 comm.CommandType = System.Data.CommandType.Text;
                 comm.CommandText = command;
-                comm.Parameters.AddRange(properties.Where(prop => prop.GetValue(entity) != null && prop.Name != "metadata").Select(prop => new SqlParameter(prop.Name, prop.GetValue(entity))).ToArray());
+                comm.Parameters.AddRange(fieldNames.Select(n => new SqlParameter(n, _instanceAnalyzer.getFieldValue(n))).ToArray());
                 comm.ExecuteNonQuery();
             }
         }
@@ -65,6 +69,16 @@ namespace gnomi.repositories
         public void update(t entity)
         {
             throw new System.NotImplementedException();
+        }
+
+        private string joinFieldNames(string[] names)
+        {
+            return $"({ string.Join(",", names) })";
+        }
+
+        private string joinParameterNames(string[] names)
+        {
+            return $"({ string.Join(",", names.Select(n => "@" + n)) })";
         }
     }
 }

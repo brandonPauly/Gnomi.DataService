@@ -1,4 +1,5 @@
-﻿using gnomi.dataService.entities;
+﻿using gnomi.common.utility.reflection;
+using gnomi.dataService.entities;
 using gnomi.dataService.services;
 using gnomi.repositories;
 using gnomi.repositories.connection;
@@ -26,6 +27,7 @@ namespace gnomi.dataService
             
             services.AddScoped<iHumanService, humanService>();
             services.AddScoped<iHumanRepository<long, human<long>>, humanRepository<long, human<long>>>();
+            services.AddScoped<iInstanceAnalyzer, instanceAnalyzer>();
             services.AddTransient<iDataConnectionFactory>(f => new sqlDataConnectionFactory(settings.dataConnectionString));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

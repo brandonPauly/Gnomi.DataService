@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace gnomi.repositories.connection
+namespace gnomi.repositories.utility
 {
     public class settings
     {

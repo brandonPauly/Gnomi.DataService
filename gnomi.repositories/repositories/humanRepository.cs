@@ -1,14 +1,14 @@
 ﻿using gnomi.common.utility.reflection;
 using gnomi.dataService.entities;
-using gnomi.repositories.connection;
+using gnomi.repositories.utility;
 using System;
 
 namespace gnomi.repositories
 {
     public class humanRepository<key, t> : baseRepository<key, t>,  iHumanRepository<key, t> where t : iEntity<key>
     {
-        public humanRepository(iDataConnectionFactory factory, iInstanceAnalyzer instanceAnalyzer)
-        : base(factory, instanceAnalyzer) { }
+        public humanRepository(iDataConnectionFactory factory, iInstanceAnalyzer instanceAnalyzer, iFieldSkipHelper skipHelper)
+        : base(factory, instanceAnalyzer, skipHelper) { }
 
         public human<long> addNewHuman(human<long> human)
         {

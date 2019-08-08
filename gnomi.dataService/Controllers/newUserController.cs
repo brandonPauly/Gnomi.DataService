@@ -37,7 +37,7 @@ namespace gnomi.dataService.controllers
                 
                 return Ok(response);
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 return StatusCode(500, "Error saving new user to database.");
             }

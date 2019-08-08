@@ -2,7 +2,7 @@
 using gnomi.dataService.entities;
 using gnomi.dataService.services;
 using gnomi.repositories;
-using gnomi.repositories.connection;
+using gnomi.repositories.utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +28,7 @@ namespace gnomi.dataService
             services.AddScoped<iHumanService, humanService>();
             services.AddScoped<iHumanRepository<long, human<long>>, humanRepository<long, human<long>>>();
             services.AddScoped<iInstanceAnalyzer, instanceAnalyzer>();
+            services.AddScoped<iFieldSkipHelper, fieldSkipHelper>();
             services.AddTransient<iDataConnectionFactory>(f => new sqlDataConnectionFactory(settings.dataConnectionString));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

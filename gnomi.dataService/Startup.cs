@@ -1,4 +1,5 @@
-﻿using gnomi.common.utility.reflection;
+﻿using gnomi.common.utility.general;
+using gnomi.common.utility.reflection;
 using gnomi.dataService.entities;
 using gnomi.dataService.services;
 using gnomi.repositories;
@@ -24,7 +25,7 @@ namespace gnomi.dataService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            services.AddScoped<iRandomStringGenerator, randomStringGenerator>();
             services.AddScoped<iHumanService, humanService>();
             services.AddScoped<iHumanRepository<long, human<long>>, humanRepository<long, human<long>>>();
             services.AddScoped<iInstanceAnalyzer, instanceAnalyzer>();

@@ -12,7 +12,6 @@ namespace gnomi.repositories
     public abstract class baseRepository<key, t> : iRepository<key, t> where t : iEntity<key> 
     {
         protected iDataConnection _connection;
-        protected SqlConnection _sqlClient;
         protected iInstanceAnalyzer _instanceAnalyzer;
         protected readonly Dictionary<Type, SqlDbType> _typeMap;
         protected iFieldSkipHelper _skipHelper;
@@ -20,11 +19,12 @@ namespace gnomi.repositories
         public baseRepository(iDataConnectionFactory factory, iInstanceAnalyzer instanceAnalyzer, iFieldSkipHelper skipHelper)
         {
             _connection = factory.getDataConnection();
-            _sqlClient = new SqlConnection(_connection.connectionString);
             _instanceAnalyzer = instanceAnalyzer;
             _typeMap = getTypeMap();
             _skipHelper = skipHelper;
         }
+
+        protected SqlConnection _sqlClient() { return new SqlConnection(_connection.connectionString); } 
 
         protected baseRepository() { }
 
@@ -36,10 +36,10 @@ namespace gnomi.repositories
 
             var command = $"insert into { tableName } { joinFieldNames(fieldNames) } values { joinParameterNames(fieldNames) }";
 
-            using (_sqlClient)
+            using (var sqlClient = _sqlClient())
             {
-                _sqlClient.Open();
-                var comm = _sqlClient.CreateCommand();
+                sqlClient.Open();
+                var comm = sqlClient.CreateCommand();
                 comm.CommandType = CommandType.Text;
                 comm.CommandText = command;
                 comm.Parameters.AddRange(fieldNames.Select(n => new SqlParameter(n, _instanceAnalyzer.getFieldValue(n))).ToArray());
@@ -55,10 +55,10 @@ namespace gnomi.repositories
 
             var command = $"insert into { tableName } { joinFieldNames(fieldNames) } values { joinParameterNames(fieldNames) }";
 
-            using (_sqlClient)
+            using (var sqlClient = _sqlClient())
             {
-                _sqlClient.Open();
-                var comm = _sqlClient.CreateCommand();
+                sqlClient.Open();
+                var comm = sqlClient.CreateCommand();
                 comm.CommandType = CommandType.Text;
                 comm.CommandText = command;
                 

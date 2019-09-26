@@ -14,11 +14,11 @@ namespace gnomi.repositories
         {
             var statement = $"insert into human (email, password, signUpDate) output inserted.humanId values (@email, @password, @signUpDate);";
 
-            using (_sqlClient)
+            using (var sqlClient = _sqlClient())
             {
-                _sqlClient.Open();
+                sqlClient.Open();
 
-                var command = _sqlClient.CreateCommand();
+                var command = sqlClient.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
                 command.CommandText = statement;
 
@@ -30,6 +30,25 @@ namespace gnomi.repositories
             }
 
             return human;
+        }
+
+        public void linkVerification(long humanId, string verificationCode)
+        {
+            var statement = $"insert into verificationKey (verificationCode, humanId) values (@verificationCode, @humanId);";
+
+            using (var sqlClient = _sqlClient())
+            {
+                sqlClient.Open();
+
+                var command = sqlClient.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = statement;
+
+                command.Parameters.AddWithValue("@verificationCode", verificationCode);
+                command.Parameters.AddWithValue("@humanId", humanId);
+
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

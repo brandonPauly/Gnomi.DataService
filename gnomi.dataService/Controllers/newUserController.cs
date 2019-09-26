@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using gnomi.dataService.requests;
 using gnomi.dataService.services;
-using gnomi.dataService.responses;
 
 namespace gnomi.dataService.controllers
 {
@@ -21,26 +19,8 @@ namespace gnomi.dataService.controllers
         [HttpPost]
         public IActionResult Post([FromBody] newUserRequest data)
         {
-            if (data.email is null || data.passwordHash is null)
-            {
-                return BadRequest();
-            }
-            try
-            {
-                var human = _service.addNewHuman(data);
-
-                var response = new newUserResponse
-                {
-                    email = human.email,
-                    humanId = human.humanId
-                };
-                
-                return Ok(response);
-            }
-            catch(Exception)
-            {
-                return StatusCode(500, "Error saving new user to database.");
-            }
+            var response = _service.addNewHuman(data);
+            return Ok(response); 
         }
     }
 }

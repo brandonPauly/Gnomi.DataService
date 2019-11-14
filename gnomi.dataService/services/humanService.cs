@@ -3,23 +3,23 @@ using gnomi.dataService.entities;
 using gnomi.dataService.requests;
 using gnomi.dataService.responses;
 using gnomi.repositories;
+using System.Threading.Tasks;
 
 namespace gnomi.dataService.services
 {
     public class humanService : iHumanService
     {
-        private iHumanRepository<long, human<long>> _repository;
+        private iHumanRepository<long, human<long>> _humanRepository;
         private iRandomStringGenerator _randomStringGenerator;
-        private readonly byte minimumVerificationLength = 12;
-        private readonly byte maximumVerificationLength = 36;
+        private readonly byte numberOfGuids = 3;
 
         public humanService(iHumanRepository<long, human<long>> repository, iRandomStringGenerator randomStringGenerator)
         {
-            _repository = repository;
+            _humanRepository = repository;
             _randomStringGenerator = randomStringGenerator;
         }
 
-        public newUserResponse addNewHuman(newUserRequest userRequest)
+        public async Task<newUserResponse> addNewHuman(newUserRequest userRequest)
         {
             var newHuman = new human<long>()
             {
@@ -27,26 +27,26 @@ namespace gnomi.dataService.services
                 password = userRequest.passwordHash
             };
 
-            newHuman = _repository.addNewHuman(newHuman);
+            newHuman = await _humanRepository.addNewHuman(newHuman);
             newHuman.password = null;
 
-            var verificationCode = _randomStringGenerator.generateRandomSequence(minimumVerificationLength, maximumVerificationLength);
+            var verificationKey = getUniqueVerificationKey();
+            var verLen = verificationKey.Length;
 
-            _repository.linkVerification(newHuman.humanId, verificationCode);
+            await _humanRepository.linkVerification(newHuman.humanId, verificationKey);
 
             var newUserResponse = new newUserResponse
             {
                 email = newHuman.email,
-                humanId = newHuman.humanId,
-                verificationCode = verificationCode
+                verificationCode = verificationKey
             };
 
             return newUserResponse;
         }
 
-        public void submitVerificationCode(long humanId, string verificationCode)
+        private string getUniqueVerificationKey()
         {
-            _repository.linkVerification(humanId, verificationCode);
+            return _randomStringGenerator.generateGuidString(numberOfGuids);
         }
     }
 }

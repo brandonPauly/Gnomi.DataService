@@ -30,7 +30,7 @@ namespace gnomi.dataService
             services.AddScoped<iHumanRepository<long, human<long>>, humanRepository<long, human<long>>>();
             services.AddScoped<iInstanceAnalyzer, instanceAnalyzer>();
             services.AddScoped<iFieldSkipHelper, fieldSkipHelper>();
-            services.AddTransient<iDataConnectionFactory>(f => new sqlDataConnectionFactory(settings.dataConnectionString));
+            services.AddScoped<iDataConnectionFactory>(f => new sqlDataConnectionFactory(settings.dataConnectionString));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

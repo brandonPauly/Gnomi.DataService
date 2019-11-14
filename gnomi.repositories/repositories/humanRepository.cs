@@ -2,6 +2,7 @@
 using gnomi.dataService.entities;
 using gnomi.repositories.utility;
 using System;
+using System.Threading.Tasks;
 
 namespace gnomi.repositories
 {
@@ -10,9 +11,9 @@ namespace gnomi.repositories
         public humanRepository(iDataConnectionFactory factory, iInstanceAnalyzer instanceAnalyzer, iFieldSkipHelper skipHelper)
         : base(factory, instanceAnalyzer, skipHelper) { }
 
-        public human<long> addNewHuman(human<long> human)
+        public async Task<human<long>> addNewHuman(human<long> human)
         {
-            var statement = $"insert into human (email, password, signUpDate) output inserted.humanId values (@email, @password, @signUpDate);";
+            var statement = $"insert into human (email, password, signUpDate, isVerified) output inserted.humanId values (@email, @password, @signUpDate, 0);";
 
             using (var sqlClient = _sqlClient())
             {
@@ -26,15 +27,15 @@ namespace gnomi.repositories
                 command.Parameters.AddWithValue("@password", human.password);
                 command.Parameters.AddWithValue("@signUpDate", DateTime.Now);
 
-                human.humanId = (long)command.ExecuteScalar();
+                human.humanId = (long) await command.ExecuteScalarAsync();
             }
 
             return human;
         }
 
-        public void linkVerification(long humanId, string verificationCode)
+        public async Task linkVerification(long humanId, string verificationCode)
         {
-            var statement = $"insert into verificationKey (verificationCode, humanId) values (@verificationCode, @humanId);";
+            var statement = $"insert into verificationKey (verificationCode, humanId, initiationDate) values (@verificationCode, @humanId, @initiationDate);";
 
             using (var sqlClient = _sqlClient())
             {
@@ -46,8 +47,9 @@ namespace gnomi.repositories
 
                 command.Parameters.AddWithValue("@verificationCode", verificationCode);
                 command.Parameters.AddWithValue("@humanId", humanId);
+                command.Parameters.AddWithValue("@initiationDate", DateTime.Now);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
     }

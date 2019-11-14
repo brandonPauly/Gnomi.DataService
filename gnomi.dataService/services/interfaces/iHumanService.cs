@@ -1,12 +1,11 @@
 ﻿using gnomi.dataService.requests;
 using gnomi.dataService.responses;
+using System.Threading.Tasks;
 
 namespace gnomi.dataService.services
 {
     public interface iHumanService
     {
-        newUserResponse addNewHuman(newUserRequest userRequest);
-
-        void submitVerificationCode(long humanId, string verificationCode);
+        Task<newUserResponse> addNewHuman(newUserRequest userRequest);
     }
 }

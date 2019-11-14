@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using gnomi.dataService.requests;
 using gnomi.dataService.services;
+using System.Threading.Tasks;
 
 namespace gnomi.dataService.controllers
 {
@@ -17,9 +18,9 @@ namespace gnomi.dataService.controllers
 
         // POST: api/newUser
         [HttpPost]
-        public IActionResult Post([FromBody] newUserRequest data)
+        public async Task<IActionResult> Post([FromBody] newUserRequest data)
         {
-            var response = _service.addNewHuman(data);
+            var response = await _service.addNewHuman(data);
             return Ok(response); 
         }
     }

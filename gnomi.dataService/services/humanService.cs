@@ -1,5 +1,6 @@
 ﻿using gnomi.common.utility.general;
 using gnomi.dataService.entities;
+using gnomi.dataService.entities.keys;
 using gnomi.dataService.requests;
 using gnomi.dataService.responses;
 using gnomi.repositories;
@@ -10,13 +11,16 @@ namespace gnomi.dataService.services
     public class humanService : iHumanService
     {
         private iHumanRepository<long, human<long>> _humanRepository;
+        private iVerificationRepository<verificationKey, verification<verificationKey>> _verificationKeyRepository;
         private iRandomStringGenerator _randomStringGenerator;
         private readonly byte numberOfGuids = 3;
 
-        public humanService(iHumanRepository<long, human<long>> repository, iRandomStringGenerator randomStringGenerator)
+        public humanService(iHumanRepository<long, human<long>> repository, iVerificationRepository<verificationKey, verification<verificationKey>> verificationKeyRepository, 
+            iRandomStringGenerator randomStringGenerator)
         {
             _humanRepository = repository;
             _randomStringGenerator = randomStringGenerator;
+            _verificationKeyRepository = verificationKeyRepository;
         }
 
         public async Task<newUserResponse> addNewHuman(newUserRequest userRequest)
@@ -31,9 +35,8 @@ namespace gnomi.dataService.services
             newHuman.password = null;
 
             var verificationKey = getUniqueVerificationKey();
-            var verLen = verificationKey.Length;
 
-            await _humanRepository.linkVerification(newHuman.humanId, verificationKey);
+            await _verificationKeyRepository.linkVerification(newHuman.humanId, verificationKey);
 
             var newUserResponse = new newUserResponse
             {
@@ -42,6 +45,11 @@ namespace gnomi.dataService.services
             };
 
             return newUserResponse;
+        }
+
+        public async Task<bool> isHumanNew(string email)
+        {
+            return await _humanRepository.isHumanNew(email);
         }
 
         private string getUniqueVerificationKey()

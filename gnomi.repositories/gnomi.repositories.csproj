@@ -5,14 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\gnomi.common\gnomi.common\gnomi.common.csproj" />
-    <ProjectReference Include="..\gnomi.models\gnomi.models\gnomi.models.csproj" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.Data.SqlClient">
-      <HintPath>..\..\..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\system.data.sqlclient\4.5.1\ref\netcoreapp2.1\System.Data.SqlClient.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\gnomi.common\gnomi.common\gnomi.common.csproj" />
+    <ProjectReference Include="..\gnomi.models\gnomi.models\gnomi.models.csproj" />
   </ItemGroup>
 
 </Project>

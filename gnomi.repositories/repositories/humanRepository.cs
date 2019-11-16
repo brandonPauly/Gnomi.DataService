@@ -33,9 +33,10 @@ namespace gnomi.repositories
             return human;
         }
 
-        public async Task linkVerification(long humanId, string verificationCode)
+        public async Task<bool> isHumanNew(string email)
         {
-            var statement = $"insert into verificationKey (verificationCode, humanId, initiationDate) values (@verificationCode, @humanId, @initiationDate);";
+            var statement = $"select humanId from human where email = @email;";
+            object id;
 
             using (var sqlClient = _sqlClient())
             {
@@ -45,12 +46,12 @@ namespace gnomi.repositories
                 command.CommandType = System.Data.CommandType.Text;
                 command.CommandText = statement;
 
-                command.Parameters.AddWithValue("@verificationCode", verificationCode);
-                command.Parameters.AddWithValue("@humanId", humanId);
-                command.Parameters.AddWithValue("@initiationDate", DateTime.Now);
+                command.Parameters.AddWithValue("@email", email);
 
-                await command.ExecuteNonQueryAsync();
+                id = await command.ExecuteScalarAsync();
             }
+
+            return id == null;
         }
     }
 }

@@ -20,8 +20,14 @@ namespace gnomi.dataService.controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] newUserRequest data)
         {
-            var response = await _service.addNewHuman(data);
-            return Ok(response); 
+            if (! await _service.isHumanNew(data.email))
+            {
+                return Conflict("human already exists");
+            }
+            else
+            {
+                return Ok(await _service.addNewHuman(data));
+            }
         }
     }
 }

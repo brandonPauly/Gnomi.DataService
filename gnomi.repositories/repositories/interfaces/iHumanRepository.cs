@@ -7,6 +7,6 @@ namespace gnomi.repositories
     {
         Task<human<long>> addNewHuman(human<long> human);
 
-        Task linkVerification(long humanId, string verificationCode);
+        Task<bool> isHumanNew(string email);
     }
 }

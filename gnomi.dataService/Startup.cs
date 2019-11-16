@@ -1,6 +1,7 @@
 ﻿using gnomi.common.utility.general;
 using gnomi.common.utility.reflection;
 using gnomi.dataService.entities;
+using gnomi.dataService.entities.keys;
 using gnomi.dataService.services;
 using gnomi.repositories;
 using gnomi.repositories.utility;
@@ -28,6 +29,7 @@ namespace gnomi.dataService
             services.AddScoped<iRandomStringGenerator, randomStringGenerator>();
             services.AddScoped<iHumanService, humanService>();
             services.AddScoped<iHumanRepository<long, human<long>>, humanRepository<long, human<long>>>();
+            services.AddScoped<iVerificationRepository<verificationKey, verification<verificationKey>>, verificationRepository<verificationKey, verification<verificationKey>>>();
             services.AddScoped<iInstanceAnalyzer, instanceAnalyzer>();
             services.AddScoped<iFieldSkipHelper, fieldSkipHelper>();
             services.AddScoped<iDataConnectionFactory>(f => new sqlDataConnectionFactory(settings.dataConnectionString));

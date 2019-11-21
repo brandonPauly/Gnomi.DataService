@@ -5,24 +5,24 @@ using System.Threading.Tasks;
 
 namespace gnomi.dataService.controllers
 {
-    [Route("api/newUser")]
+    [Route("api/newHuman")]
     [ApiController]
-    public class newUserController : ControllerBase
+    public class newHumanController : ControllerBase
     {
         private iHumanService _service;
 
-        public newUserController(iHumanService service)
+        public newHumanController(iHumanService service)
         {
             _service = service;
         }
 
-        // POST: api/newUser
+        // POST: api/newHuman
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] newUserRequest data)
+        public async Task<IActionResult> Post([FromBody] newHumanRequest data)
         {
             if (! await _service.isHumanNew(data.email))
             {
-                return Conflict("human already exists");
+                return Conflict("existing human");
             }
             else
             {

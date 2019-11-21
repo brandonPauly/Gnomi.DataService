@@ -6,7 +6,7 @@ namespace gnomi.dataService.services
 {
     public interface iHumanService
     {
-        Task<newUserResponse> addNewHuman(newUserRequest userRequest);
+        Task<newHumanResponse> addNewHuman(newHumanRequest userRequest);
         Task<bool> isHumanNew(string email);
     }
 }

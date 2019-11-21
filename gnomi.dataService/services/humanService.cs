@@ -23,7 +23,7 @@ namespace gnomi.dataService.services
             _verificationKeyRepository = verificationKeyRepository;
         }
 
-        public async Task<newUserResponse> addNewHuman(newUserRequest userRequest)
+        public async Task<newHumanResponse> addNewHuman(newHumanRequest userRequest)
         {
             var newHuman = new human<long>()
             {
@@ -38,13 +38,13 @@ namespace gnomi.dataService.services
 
             await _verificationKeyRepository.linkVerification(newHuman.humanId, verificationKey);
 
-            var newUserResponse = new newUserResponse
+            var newHumanResponse = new newHumanResponse
             {
                 email = newHuman.email,
                 verificationCode = verificationKey
             };
 
-            return newUserResponse;
+            return newHumanResponse;
         }
 
         public async Task<bool> isHumanNew(string email)
